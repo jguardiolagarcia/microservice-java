@@ -1,2 +1,7 @@
-server.port=8002
-spring.application.name=car-service
+spring:
+  application:
+    name: bike-service
+  cloud:
+    config:
+    enabled: true
+    uri: https://localhost:8001
