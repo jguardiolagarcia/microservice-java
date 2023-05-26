@@ -1,21 +1,24 @@
 package com.tutorial.userservice.controller;
 
 import com.tutorial.userservice.entity.User;
+import com.tutorial.userservice.model.Bike;
+import com.tutorial.userservice.model.Car;
 import com.tutorial.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class    UserController {
 
     @Autowired
     UserService userService;
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<User>> getAll() {
         List<User> users = userService.getAll();
         if(users.isEmpty())
@@ -36,5 +39,43 @@ public class UserController {
         User userNew = userService.save(user);
         return ResponseEntity.ok(userNew);
     }
+    @GetMapping("/cars/{id}")
+    public ResponseEntity<List<Car>> getCars(@PathVariable("id") int userId) {
+        User user = userService.getUserById(userId);
+        if(user == null)
+            return ResponseEntity.notFound().build();
+        List<Car> cars = userService.getCars(userId);
+        return ResponseEntity.ok(cars);
+    }
 
+    @GetMapping("/bikes/{id}")
+    public ResponseEntity<List<Bike>> getBikes(@PathVariable("id") int userId) {
+        User user = userService.getUserById(userId);
+        if(user == null)
+            return ResponseEntity.notFound().build();
+        List<Bike> bikes = userService.getBikes(userId);
+        return ResponseEntity.ok(bikes);
+    }
+    @PostMapping("/savecar/{userId}")
+    public ResponseEntity<Car> saveCar(@PathVariable("userId") int userId , @RequestBody Car car){
+        User user = userService.getUserById(userId);
+        if(user == null)
+            return ResponseEntity.notFound().build();
+        Car carNew = userService.saveCar(userId,car);
+        return ResponseEntity.ok(carNew);
+    }
+    @PostMapping("/savebike/{userId}")
+    public ResponseEntity<Bike> saveCar(@PathVariable("userId") int userId , @RequestBody Bike bike){
+        User user = userService.getUserById(userId);
+        if(user == null)
+            return ResponseEntity.notFound().build();
+        Bike bikeNew = userService.saveBike(userId,bike);
+        return ResponseEntity.ok(bikeNew);
+    }
+
+    @GetMapping("/getAll/{userId}")
+    public ResponseEntity<Map<String,Object>> getAll(@PathVariable("userId") int userId) {
+        Map<String,Object> res = userService.getUserAndVehicles(userId);
+        return ResponseEntity.ok(res);
+    }
 }
